@@ -1,5 +1,6 @@
 package com.examplePharmaTech.PharmaTech.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,4 +38,46 @@ public class ProductoService {
         return productoRepository.buscarPorId(id);
     }
 
+    //----------- REGLAS DE NEGOCIO ------------------------------
+    public Producto venderProducto(Integer id, String numeroReceta) {
+
+    Producto producto = productoRepository.buscarPorId(id);
+
+    if (producto == null) {
+        return null;
+    }
+
+    // Validación receta
+    if (producto.isReceta()) {
+        if (numeroReceta == null || numeroReceta.isEmpty()) {
+            return null;
+        }
+    }
+
+    // Descontar stock
+    producto.setStock(producto.getStock() - 1);
+
+    // Alerta reposición
+    if (producto.getStock() < 10) {
+        producto.setAlertaReposicion(true);
+    }
+
+    return productoRepository.actualizar(producto);
+    }
+
+    //-------------------------------------------------------------
+    public List<Producto> productosCriticos() {
+
+    List<Producto> lista = new ArrayList<>();
+
+    for (Producto p : productoRepository.obtenerProductos()) {
+        if (p.getStock() < 5 && p.getTipo().equals("Crítico")) {
+            lista.add(p);
+        }
+    }
+
+        return lista;
+    }
+
+    
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.examplePharmaTech.PharmaTech.model.Producto;
@@ -45,6 +46,18 @@ public class ProductoController {
     @DeleteMapping("{id}")
     public String eliminarEquipaje(@PathVariable Integer id){
         return productoService.deleteProducto(id);
+    }
+
+    //reglas de negocio.--------------------
+    @PostMapping("/venta/{id}")
+    public Producto venderProducto(@PathVariable Integer id,
+                               @RequestParam(required = false) String numeroReceta) {
+        return productoService.venderProducto(id, numeroReceta);
+    }
+
+    @GetMapping("/criticos")
+    public List<Producto> obtenerCriticos() {
+        return productoService.productosCriticos();
     }
 
 }
